@@ -1,0 +1,23 @@
+spring:
+  profiles:
+    active: "dev"
+    datasource:
+      driver-class-name: com.mysql.jdbc.Driver
+      url: jdbc:mysql://localhost:3306
+      username: root
+      password: root
+    jpa:
+      database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+      show-sql: true
+      hibernate:
+        dd-auto: validate
+      generate-ddl: true
+      properties:
+        hibernate:
+          default_schema: takenote
+logging:
+  level:
+    com.sam.takenote: debug
+---
+spring:
+  profiles: "stage"
