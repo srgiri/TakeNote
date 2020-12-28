@@ -1,4 +1,4 @@
-package com.sam.takenote.model;
+package com.sam.takenote.entity;
 
 import lombok.Getter;
 import lombok.Setter;

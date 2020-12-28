@@ -11,7 +11,7 @@ CREATE TABLE takenote.shelf (
   is_deleted BOOLEAN NULL,
   user_uuid uuid NOT NULL,
   created_on TIMESTAMP NOT NULL,
-  upadted_on TIMESTAMP NOT NULL,
+  updated_on TIMESTAMP NOT NULL,
   PRIMARY KEY (shelf_id),
   CONSTRAINT user_shelf_uuid
     FOREIGN KEY (user_uuid)
@@ -19,7 +19,7 @@ CREATE TABLE takenote.shelf (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION);
 
-CREATE TABLE takenote.lables (
+CREATE TABLE takenote.labels (
   label_id INT NOT NULL,
   label_name VARCHAR(45) NOT NULL,
   user_uuid uuid NOT NULL,
@@ -83,9 +83,11 @@ CREATE TABLE takenote.tags (
 
 
 CREATE TABLE takenote.tag_note (
+  tage_note_id INT NOT NULL,
   tag_id INT NOT NULL,
   note_id INT NOT NULL,
   user_uuid uuid NOT NULL,
+  PRIMARY KEY (tage_note_id),
   CONSTRAINT tag_note_user_uuid
     FOREIGN KEY (user_uuid)
     REFERENCES takenote.users (user_uuid)
