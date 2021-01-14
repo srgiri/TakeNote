@@ -59,6 +59,7 @@ CREATE TABLE takenote.note (
 created_on TIMESTAMP NOT NULL,
 updated_on TIMESTAMP NOT NULL,
 is_deleted BOOLEAN,
+  PRIMARY KEY (note_id),
   CONSTRAINT note_notebook
     FOREIGN KEY (notebook_id)
     REFERENCES takenote.notebook (notebook_id)

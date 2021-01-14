@@ -1,6 +1,8 @@
 package com.sam.takenote.entity;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 
@@ -13,13 +15,20 @@ import javax.persistence.*;
 @Data
 public class Labels {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "label_id")
+    @Getter
+    @Setter
     private Integer labelId;
 
     @Column(name = "label_name")
+    @Getter
+    @Setter
     private String labelName;
 
     @ManyToOne
     @JoinColumn(name = "user_uuid")
+    @Getter
+    @Setter
     private Users users;
 }
