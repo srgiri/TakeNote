@@ -33,13 +33,13 @@ public class Note {
     @Setter
     private String text;
 
-    @Column(name = "notebook_id")
+    /*@Column(name = "notebook_id")
     @Getter
     @Setter
-    private Integer noteBookId;
+    private Integer noteBookId;*/
 
     @ManyToOne
-    @JoinColumn(name = "notebook_id", insertable = false, updatable = false)
+    @JoinColumn(name = "notebook_id"/*, insertable = false, updatable = false*/)
     @Getter
     @Setter
     private NoteBook noteBook;

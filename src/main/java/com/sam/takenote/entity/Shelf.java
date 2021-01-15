@@ -33,13 +33,13 @@ public class Shelf {
     @Setter
     private Boolean deleted;
 
-    @Column(name = "user_uuid")
+    /*@Column(name = "user_uuid")
     @Getter
     @Setter
-    private UUID userUuid;
+    private UUID userUuid;*/
 
     @ManyToOne
-    @JoinColumn(name = "user_uuid", insertable = false, updatable = false)
+    @JoinColumn(name = "user_uuid"/*, insertable = false, updatable = false*/)
     @Getter
     @Setter
     private Users users;

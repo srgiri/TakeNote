@@ -23,7 +23,7 @@ public class TagNote {
     @Setter
     private Integer tagNoteId;
 
-    @Column(name = "tag_id")
+    /*@Column(name = "tag_id")
     @Getter
     @Setter
     private Integer tagId;
@@ -36,22 +36,22 @@ public class TagNote {
     @Column(name = "user_uuid")
     @Getter
     @Setter
-    private UUID userUuid;
+    private UUID userUuid;*/
 
     @ManyToOne
-    @JoinColumn(name = "tag_id", insertable = false, updatable = false)
+    @JoinColumn(name = "tag_id"/*, insertable = false, updatable = false*/)
     @Getter
     @Setter
     private Tag tag;
 
     @ManyToOne
-    @JoinColumn(name = "note_id", insertable = false, updatable = false)
+    @JoinColumn(name = "note_id"/*, insertable = false, updatable = false*/)
     @Getter
     @Setter
     private Note note;
 
     @ManyToOne
-    @JoinColumn(name = "user_uuid", insertable = false, updatable = false)
+    @JoinColumn(name = "user_uuid"/*, insertable = false, updatable = false*/)
     @Getter
     @Setter
     private Users users;

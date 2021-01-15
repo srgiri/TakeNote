@@ -28,13 +28,13 @@ public class NoteBook {
     @Setter
     private String noteBookName;
 
-    @Column(name = "shelf_id")
+   /* @Column(name = "shelf_id")
     @Getter
     @Setter
-    private Integer shelfId;
+    private Integer shelfId;*/
 
     @ManyToOne
-    @JoinColumn(name = "shelf_id", insertable = false, updatable = false)
+    @JoinColumn(name = "shelf_id"/*, insertable = false, updatable = false*/)
     @Getter
     @Setter
     private Shelf shelf;

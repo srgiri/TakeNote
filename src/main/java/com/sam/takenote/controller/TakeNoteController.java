@@ -1,6 +1,7 @@
 package com.sam.takenote.controller;
 
 import com.sam.takenote.dto.request.CreateUserRequest;
+import com.sam.takenote.dto.request.UserAuthRequest;
 import com.sam.takenote.exception.TakeNoteGenericException;
 import com.sam.takenote.service.UserService;
 import com.sam.takenote.validators.UserValidator;
@@ -10,10 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -35,10 +33,36 @@ public class TakeNoteController {
         }
         try {
             userService.createUser(createUserRequest);
+            return ResponseEntity.status(HttpStatus.CREATED).body("User creation successful");
         } catch (TakeNoteGenericException te) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(te.getMessage());
         }
-        return ResponseEntity.status(HttpStatus.CREATED).body("User creation successful");
+    }
+
+    @PostMapping("/authentication")
+    public ResponseEntity<String> getUserAuthToken(@Valid @RequestBody final UserAuthRequest userAuthRequest,
+                                             final BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            log.error("User authentication request data has validation errors: {}", userAuthRequest);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(bindingResult.getAllErrors().get(0).getDefaultMessage());
+        }
+        try {
+            String token = userService.getAuthToken(userAuthRequest);
+            return ResponseEntity.status(HttpStatus.CREATED).body(token);
+        } catch (TakeNoteGenericException te) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(te.getMessage());
+        }
+    }
+
+    @GetMapping("/checkToken")
+    public ResponseEntity<String> checkToken(@RequestParam String token) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(String.valueOf(userService.validateToken(token)));
+        } catch (TakeNoteGenericException te) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(te.getMessage());
+        }
     }
 
 }
