@@ -1,13 +1,11 @@
 package com.sam.takenote.helper;
 
 import com.sam.takenote.exception.TakeNoteGenericException;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.springframework.stereotype.Component;
 
-import javax.xml.bind.DatatypeConverter;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,17 +15,20 @@ import java.util.function.Function;
 @Component
 public class JWTHelper {
 
-    private final String SECRET_KEY = "secret";
+    private final String SECRET_KEY = "secret_key";
 
-    private final int TOKEN_EXPIRY_MINUTES = 5;
+    private final int TOKEN_EXPIRY_MINUTES = 20;
 
     public String generateToken(String username) {
-        Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, username);
+        try {
+            Map<String, Object> claims = new HashMap<>();
+            return createToken(claims, username);
+        } catch (Exception e) {
+            throw new TakeNoteGenericException("Token cannot be generated");
+        }
     }
 
     public Boolean validateToken(String token, String username) {
-        checkSignature(token);
         final String tokenUsername = extractUsername(token);
         return (username.equals(tokenUsername) && !isTokenExpired(token));
     }
@@ -47,9 +48,11 @@ public class JWTHelper {
 
     private Claims extractAllClaims(String token) {
         try {
-            return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
+            return Jwts.parser().setSigningKey(SECRET_KEY.getBytes(StandardCharsets.UTF_8)).parseClaimsJws(token).getBody();
         } catch (ExpiredJwtException e) {
             throw new TakeNoteGenericException("Token is expired");
+        } catch (SignatureException e) {
+            throw new TakeNoteGenericException("Token signature is invalid");
         }
     }
 
@@ -57,17 +60,9 @@ public class JWTHelper {
         return extractExpiration(token).before(new Date());
     }
 
-    private String createToken(Map<String, Object> claims, String subject) {
+    private String createToken(Map<String, Object> claims, String subject) throws UnsupportedEncodingException {
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + Duration.ofMinutes(TOKEN_EXPIRY_MINUTES).toMillis()))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY.getBytes(StandardCharsets.UTF_8)).compact();
     }
-
-    private void checkSignature(String jwt) {
-        //This line will throw an exception if it is not a signed JWS (as expected)
-        Jwts.parser()
-                .setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY))
-                .parseClaimsJws(jwt).getBody();
-    }
-
 }

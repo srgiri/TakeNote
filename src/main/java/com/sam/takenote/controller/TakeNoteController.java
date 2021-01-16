@@ -2,9 +2,10 @@ package com.sam.takenote.controller;
 
 import com.sam.takenote.dto.request.CreateUserRequest;
 import com.sam.takenote.dto.request.UserAuthRequest;
+import com.sam.takenote.entity.Users;
 import com.sam.takenote.exception.TakeNoteGenericException;
+import com.sam.takenote.service.ShelfService;
 import com.sam.takenote.service.UserService;
-import com.sam.takenote.validators.UserValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,12 +15,17 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/TakeNote/v1")
 public class TakeNoteController {
+
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ShelfService shelfService;
 
     private static final Logger log = LoggerFactory.getLogger(TakeNoteController.class);
 
@@ -41,7 +47,7 @@ public class TakeNoteController {
 
     @PostMapping("/authentication")
     public ResponseEntity<String> getUserAuthToken(@Valid @RequestBody final UserAuthRequest userAuthRequest,
-                                             final BindingResult bindingResult) {
+                                                   final BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             log.error("User authentication request data has validation errors: {}", userAuthRequest);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -55,7 +61,30 @@ public class TakeNoteController {
         }
     }
 
-    @GetMapping("/checkToken")
+    @PostMapping("/createShelf")
+    public ResponseEntity<String> createShelf(@RequestParam String shelfName, @RequestHeader String token) {
+        try {
+            Optional<Users> usersOptional = userService.validateToken(token);
+            shelfService.createShelf(usersOptional.get(), shelfName);
+            return ResponseEntity.status(HttpStatus.CREATED).body("Shelf created successfully");
+        } catch (TakeNoteGenericException te) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(te.getMessage());
+        }
+    }
+
+    @PostMapping("/renameShelf")
+    public ResponseEntity<String> renameShelf(@RequestParam String oldShelfName, @RequestParam String newShelfName,
+                                              @RequestHeader String token) {
+        try {
+            Optional<Users> usersOptional = userService.validateToken(token);
+            shelfService.renameShelf(usersOptional.get(), oldShelfName, newShelfName);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Shelf renamed successfully");
+        } catch (TakeNoteGenericException te) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(te.getMessage());
+        }
+    }
+
+   /* @GetMapping("/checkToken")
     public ResponseEntity<String> checkToken(@RequestParam String token) {
         try {
             return ResponseEntity.status(HttpStatus.OK)
@@ -63,6 +92,6 @@ public class TakeNoteController {
         } catch (TakeNoteGenericException te) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(te.getMessage());
         }
-    }
+    }*/
 
 }

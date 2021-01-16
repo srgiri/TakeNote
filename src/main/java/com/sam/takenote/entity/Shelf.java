@@ -17,7 +17,7 @@ import java.util.UUID;
 @Data
 public class Shelf {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "shelf_id")
     @Getter
     @Setter

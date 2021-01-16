@@ -17,7 +17,7 @@ import java.util.UUID;
 @Data
 public class TagNote {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "tag_note_id")
     @Getter
     @Setter

@@ -10,5 +10,7 @@ import java.util.UUID;
 public interface UserRepository extends CrudRepository<Users, UUID> {
     Long countByUserName(String username);
 
+    Users findByUserName(String username);
+
     Long countByUserNameAndPassword(String username, String password);
 }

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -43,11 +44,17 @@ public class UserService {
         return jwtHelper.generateToken(userAuthRequest.getUsername());
     }
 
-    public boolean validateToken(String token) throws TakeNoteGenericException {
+    public Optional<Users> validateToken(String token) throws TakeNoteGenericException {
         String username = jwtHelper.extractUsername(token);
-        if(userRepository.countByUserName(username) == 0) {
+        if (userRepository.countByUserName(username) == 0) {
             throw new TakeNoteGenericException("Invalid token");
         }
-        return jwtHelper.validateToken(token, username);
+        if (jwtHelper.validateToken(token, username)) {
+            Users users = userRepository.findByUserName(username);
+            if (users != null) {
+                return Optional.of(users);
+            }
+        }
+        throw new TakeNoteGenericException("User data not found");
     }
 }

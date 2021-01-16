@@ -17,7 +17,7 @@ import java.util.UUID;
 @Data
 public class Note {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "note_id")
     @Getter
     @Setter
