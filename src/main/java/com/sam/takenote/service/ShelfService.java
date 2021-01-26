@@ -10,6 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
+import static com.sam.takenote.exception.TakeNoteErrorCodes.DATA_ALREADY_EXISTS;
+import static com.sam.takenote.exception.TakeNoteErrorCodes.DATA_NOT_FOUND;
+
 @Service
 public class ShelfService {
 
@@ -19,7 +22,7 @@ public class ShelfService {
     @Transactional
     public void createShelf(Users users, String shelfName) throws TakeNoteGenericException {
         if (shelfRepository.countByShelfNameAndUserName(shelfName, users.getUserName()) > 0) {
-            throw new TakeNoteGenericException(String.format("Shelf name %s already exists", shelfName));
+            throw new TakeNoteGenericException(String.format("Shelf name %s already exists", shelfName), DATA_ALREADY_EXISTS);
         }
         Shelf shelf = new Shelf();
         shelf.setShelfName(shelfName);
@@ -33,11 +36,11 @@ public class ShelfService {
     @Transactional
     public void renameShelf(Users users, String oldShelfName, String newShelfName) throws TakeNoteGenericException {
         if (shelfRepository.countByShelfNameAndUserName(newShelfName, users.getUserName()) > 0) {
-            throw new TakeNoteGenericException(String.format("New shelf name %s already exists", newShelfName));
+            throw new TakeNoteGenericException(String.format("New shelf name %s already exists", newShelfName), DATA_ALREADY_EXISTS);
         }
         Shelf shelf = shelfRepository.findByNameAndUserName(oldShelfName, users.getUserName());
         if (shelf == null) {
-            throw new TakeNoteGenericException(String.format("Original shelf name %s is not found", oldShelfName));
+            throw new TakeNoteGenericException(String.format("Original shelf name %s is not found", oldShelfName), DATA_NOT_FOUND);
         }
         shelf.setShelfName(newShelfName);
         shelf.setUpdatedOn(new Date());

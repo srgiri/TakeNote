@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import static com.sam.takenote.exception.TakeNoteErrorCodes.CLIENT_TOKEN_ERROR;
+
 @Component
 public class JWTHelper {
 
@@ -50,9 +52,9 @@ public class JWTHelper {
         try {
             return Jwts.parser().setSigningKey(SECRET_KEY.getBytes(StandardCharsets.UTF_8)).parseClaimsJws(token).getBody();
         } catch (ExpiredJwtException e) {
-            throw new TakeNoteGenericException("Token is expired");
+            throw new TakeNoteGenericException("Token is expired", CLIENT_TOKEN_ERROR);
         } catch (SignatureException e) {
-            throw new TakeNoteGenericException("Token signature is invalid");
+            throw new TakeNoteGenericException("Token signature is invalid", CLIENT_TOKEN_ERROR);
         }
     }
 
